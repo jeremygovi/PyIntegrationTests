@@ -1,0 +1,709 @@
+{
+  "$defs": {
+    "ActionStep": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "pattern": "^[a-z][a-z0-9_.-]+$",
+          "title": "Action",
+          "type": "string"
+        },
+        "assertions": {
+          "items": {
+            "$ref": "#/$defs/Predicate"
+          },
+          "title": "Assertions",
+          "type": "array"
+        },
+        "captures": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Capture"
+          },
+          "title": "Captures",
+          "type": "object"
+        },
+        "creates": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Resource"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "expectedError": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExpectedError"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "id": {
+          "pattern": "^[a-z][a-z0-9_-]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "const": "action",
+          "default": "action",
+          "title": "Kind",
+          "type": "string"
+        },
+        "provider": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Provider"
+        },
+        "sensitive": {
+          "default": false,
+          "title": "Sensitive",
+          "type": "boolean"
+        },
+        "tracks": {
+          "items": {
+            "$ref": "#/$defs/Resource"
+          },
+          "title": "Tracks",
+          "type": "array"
+        },
+        "uses": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Uses",
+          "type": "array"
+        },
+        "with": {
+          "additionalProperties": true,
+          "title": "With",
+          "type": "object"
+        }
+      },
+      "required": [
+        "action",
+        "id"
+      ],
+      "title": "ActionStep",
+      "type": "object"
+    },
+    "AssertStep": {
+      "additionalProperties": false,
+      "properties": {
+        "assertions": {
+          "items": {
+            "$ref": "#/$defs/Predicate"
+          },
+          "minItems": 1,
+          "title": "Assertions",
+          "type": "array"
+        },
+        "captures": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Capture"
+          },
+          "title": "Captures",
+          "type": "object"
+        },
+        "failWhen": {
+          "items": {
+            "$ref": "#/$defs/Predicate"
+          },
+          "title": "Failwhen",
+          "type": "array"
+        },
+        "id": {
+          "pattern": "^[a-z][a-z0-9_-]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "interval": {
+          "default": 1,
+          "exclusiveMinimum": 0,
+          "maximum": 300,
+          "title": "Interval",
+          "type": "number"
+        },
+        "kind": {
+          "const": "assert",
+          "title": "Kind",
+          "type": "string"
+        },
+        "mode": {
+          "default": "immediate",
+          "enum": [
+            "immediate",
+            "eventually",
+            "consistently"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "observe": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Observation"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "sensitive": {
+          "default": false,
+          "title": "Sensitive",
+          "type": "boolean"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        },
+        "timeout": {
+          "default": 60,
+          "exclusiveMinimum": 0,
+          "maximum": 86400,
+          "title": "Timeout",
+          "type": "number"
+        }
+      },
+      "required": [
+        "kind",
+        "id",
+        "assertions"
+      ],
+      "title": "AssertStep",
+      "type": "object"
+    },
+    "Capture": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "default": "$",
+          "title": "Path",
+          "type": "string"
+        },
+        "sensitive": {
+          "default": false,
+          "title": "Sensitive",
+          "type": "boolean"
+        },
+        "transforms": {
+          "items": {
+            "$ref": "#/$defs/Transform"
+          },
+          "title": "Transforms",
+          "type": "array"
+        }
+      },
+      "title": "Capture",
+      "type": "object"
+    },
+    "Case": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[a-z][a-z0-9_-]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "labels": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Labels",
+          "type": "object"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "steps": {
+          "items": {
+            "$ref": "#/$defs/Step"
+          },
+          "minItems": 1,
+          "title": "Steps",
+          "type": "array"
+        },
+        "timeout": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "maximum": 86400,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Timeout"
+        }
+      },
+      "required": [
+        "id",
+        "steps"
+      ],
+      "title": "Case",
+      "type": "object"
+    },
+    "Defaults": {
+      "additionalProperties": false,
+      "properties": {
+        "timeout": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "maximum": 86400,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Timeout"
+        }
+      },
+      "title": "Defaults",
+      "type": "object"
+    },
+    "ExpectedError": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Code"
+        },
+        "provider": {
+          "title": "Provider",
+          "type": "string"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        }
+      },
+      "required": [
+        "provider"
+      ],
+      "title": "ExpectedError",
+      "type": "object"
+    },
+    "Invocation": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "pattern": "^[a-z][a-z0-9_.-]+$",
+          "title": "Action",
+          "type": "string"
+        },
+        "provider": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Provider"
+        },
+        "with": {
+          "additionalProperties": true,
+          "title": "With",
+          "type": "object"
+        }
+      },
+      "required": [
+        "action"
+      ],
+      "title": "Invocation",
+      "type": "object"
+    },
+    "Observation": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "pattern": "^[a-z][a-z0-9_.-]+$",
+          "title": "Action",
+          "type": "string"
+        },
+        "notFound": {
+          "default": "error",
+          "enum": [
+            "error",
+            "null"
+          ],
+          "title": "Notfound",
+          "type": "string"
+        },
+        "provider": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Provider"
+        },
+        "with": {
+          "additionalProperties": true,
+          "title": "With",
+          "type": "object"
+        }
+      },
+      "required": [
+        "action"
+      ],
+      "title": "Observation",
+      "type": "object"
+    },
+    "Predicate": {
+      "additionalProperties": false,
+      "properties": {
+        "allowEmpty": {
+          "default": false,
+          "title": "Allowempty",
+          "type": "boolean"
+        },
+        "assertion": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assertion"
+        },
+        "checks": {
+          "items": {
+            "$ref": "#/$defs/Predicate"
+          },
+          "title": "Checks",
+          "type": "array"
+        },
+        "default": {
+          "default": null,
+          "title": "Default"
+        },
+        "op": {
+          "enum": [
+            "equal",
+            "notEqual",
+            "exists",
+            "notExists",
+            "isNull",
+            "isNotNull",
+            "contains",
+            "notContains",
+            "isSubset",
+            "isNotSubset",
+            "lengthEqual",
+            "isType",
+            "isEmpty",
+            "isNotEmpty",
+            "greater",
+            "greaterOrEqual",
+            "less",
+            "lessOrEqual",
+            "matchRegex",
+            "allOf",
+            "anyOf",
+            "not",
+            "custom"
+          ],
+          "title": "Op",
+          "type": "string"
+        },
+        "order": {
+          "default": "ordered",
+          "enum": [
+            "ordered",
+            "set",
+            "multiset"
+          ],
+          "title": "Order",
+          "type": "string"
+        },
+        "path": {
+          "default": "$",
+          "title": "Path",
+          "type": "string"
+        },
+        "quantifier": {
+          "default": "scalar",
+          "enum": [
+            "scalar",
+            "any",
+            "all"
+          ],
+          "title": "Quantifier",
+          "type": "string"
+        },
+        "sensitive": {
+          "default": false,
+          "title": "Sensitive",
+          "type": "boolean"
+        },
+        "transforms": {
+          "items": {
+            "$ref": "#/$defs/Transform"
+          },
+          "title": "Transforms",
+          "type": "array"
+        },
+        "value": {
+          "default": null,
+          "title": "Value"
+        }
+      },
+      "required": [
+        "op"
+      ],
+      "title": "Predicate",
+      "type": "object"
+    },
+    "Resource": {
+      "additionalProperties": false,
+      "description": "Exact probe and run-specific ownership proof, persisted before creation.",
+      "properties": {
+        "absent": {
+          "items": {
+            "$ref": "#/$defs/Predicate"
+          },
+          "minItems": 1,
+          "title": "Absent",
+          "type": "array"
+        },
+        "after": {
+          "items": {
+            "type": "string"
+          },
+          "title": "After",
+          "type": "array"
+        },
+        "cleaned": {
+          "items": {
+            "$ref": "#/$defs/Predicate"
+          },
+          "title": "Cleaned",
+          "type": "array"
+        },
+        "cleanup": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Invocation"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "id": {
+          "pattern": "^[a-z][a-z0-9_-]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "owned": {
+          "items": {
+            "$ref": "#/$defs/Predicate"
+          },
+          "minItems": 1,
+          "title": "Owned",
+          "type": "array"
+        },
+        "probe": {
+          "$ref": "#/$defs/Observation"
+        },
+        "verify": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Observation"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "id",
+        "probe",
+        "absent",
+        "owned"
+      ],
+      "title": "Resource",
+      "type": "object"
+    },
+    "Step": {
+      "discriminator": {
+        "mapping": {
+          "action": "#/$defs/ActionStep",
+          "assert": "#/$defs/AssertStep"
+        },
+        "propertyName": "kind"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ActionStep"
+        },
+        {
+          "$ref": "#/$defs/AssertStep"
+        }
+      ]
+    },
+    "Transform": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "enum": [
+            "decodeBase64",
+            "decodeJson",
+            "sort",
+            "lower",
+            "stripTrailingDot",
+            "decimal"
+          ],
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "Transform",
+      "type": "object"
+    }
+  },
+  "$id": "https://raw.githubusercontent.com/jeremygovi/PyIntegrationTests/master/schemas/suite.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "apiVersion": {
+      "const": "pyintegrationtests/v1alpha1",
+      "title": "Apiversion",
+      "type": "string"
+    },
+    "config": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Config"
+    },
+    "defaults": {
+      "$ref": "#/$defs/Defaults"
+    },
+    "id": {
+      "pattern": "^[a-z][a-z0-9_-]*$",
+      "title": "Id",
+      "type": "string"
+    },
+    "inputs": {
+      "additionalProperties": true,
+      "title": "Inputs",
+      "type": "object"
+    },
+    "labels": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "Labels",
+      "type": "object"
+    },
+    "name": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Name"
+    },
+    "sensitiveInputs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Sensitiveinputs",
+      "type": "array"
+    },
+    "tests": {
+      "items": {
+        "$ref": "#/$defs/Case"
+      },
+      "minItems": 1,
+      "title": "Tests",
+      "type": "array"
+    }
+  },
+  "required": [
+    "apiVersion",
+    "id",
+    "tests"
+  ],
+  "title": "Suite",
+  "type": "object"
+}

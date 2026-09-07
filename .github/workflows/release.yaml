@@ -1,0 +1,30 @@
+name: Build release artifacts
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+permissions:
+  contents: read
+jobs:
+  artifacts:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Verify tag version
+        if: github.ref_type == 'tag'
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          docker build --target tooling -t pyintegrationtests-tooling .
+          docker run --rm -e RELEASE_TAG -v "$PWD:/app" pyintegrationtests-tooling python scripts/check_release.py
+      - name: Verify and package in Docker
+        run: make all
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: pyintegrationtests-distributions
+          path: dist/*
+          if-no-files-found: error
+          retention-days: 30

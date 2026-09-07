@@ -1,0 +1,6 @@
+apiVersion: v2
+name: integration-fixture
+description: Standalone Deployment and Service for the PyIntegrationTests example
+type: application
+version: 0.1.0
+appVersion: '1.28.0'

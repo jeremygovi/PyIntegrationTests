@@ -1,0 +1,60 @@
+name: CI
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.12', '3.13', '3.14']
+    env:
+      PYTHON_VERSION: ${{ matrix.python }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Build isolated development image
+        run: make build
+      - name: Offline unit, contract and plugin tests
+        run: make test
+      - name: Lint, format, types and schema drift
+        if: matrix.python == '3.12'
+        run: make check
+      - name: Validate and collect examples without credentials
+        run: |
+          make validate list
+          docker compose run --rm dev pytest --collect-only examples
+      - name: Build and inspect distribution
+        if: matrix.python == '3.12'
+        run: make package
+      - name: Preserve offline test results
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: offline-results-python-${{ matrix.python }}
+          path: |
+            reports/junit.xml
+            coverage.xml
+          retention-days: 14
+          if-no-files-found: ignore
+  minimal:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Validate without optional SDKs
+        run: |
+          docker build --target minimal -t pyintegrationtests-minimal .
+          docker run --rm --network none -v "$PWD:/app" pyintegrationtests-minimal pyintegrationtests validate examples
+          docker run --rm --network none -v "$PWD:/app" pyintegrationtests-minimal pytest --collect-only examples

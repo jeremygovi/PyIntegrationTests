@@ -1,0 +1,134 @@
+# yaml-language-server: $schema=../../schemas/suite.schema.json
+apiVersion: pyintegrationtests/v1alpha1
+id: helm-workload
+name: Helm Deployment and Service lifecycle
+config: config.example.yaml
+inputs:
+  image: nginx:1.28.0-alpine
+tests:
+  - id: deployment
+    steps:
+      - kind: action
+        id: name
+        action: name.generate
+        with: {prefix: pit-workload, maxLength: 53}
+      - kind: action
+        id: install
+        action: helm.command
+        provider: charts
+        with:
+          operation: install
+          release: {$ref: {source: steps.name.data, path: $.name}}
+          chart: chart
+          values:
+            image: {$ref: {source: inputs, path: $.image}}
+            replicas: 1
+            runId: {$ref: {source: run, path: $.id}}
+        creates:
+          id: release
+          probe:
+            action: helm.command
+            provider: charts
+            with:
+              operation: status
+              release: {$ref: {source: steps.name.data, path: $.name}}
+            notFound: 'null'
+          absent: [{op: isNull}]
+          owned:
+            - path: $.info.description
+              op: equal
+              value:
+                $format:
+                  template: 'pyintegrationtests:{id}'
+                  values: {id: {$ref: {source: run, path: $.id}}}
+          cleanup:
+            action: helm.command
+            provider: charts
+            with:
+              operation: uninstall
+              release: {$ref: {source: steps.name.data, path: $.name}}
+        tracks:
+          - id: deployment
+            probe:
+              action: kubernetes.resource
+              provider: cluster
+              with:
+                apiVersion: apps/v1
+                kind: Deployment
+                name: {$ref: {source: steps.name.data, path: $.name}}
+              notFound: 'null'
+            absent: [{op: isNull}]
+            owned:
+              - path: "$.metadata.labels['pyintegrationtests.io/run']"
+                op: equal
+                value: {$ref: {source: run, path: $.id}}
+            after: [release]
+            cleaned: [{op: isNull}]
+          - id: service
+            probe:
+              action: kubernetes.resource
+              provider: cluster
+              with:
+                apiVersion: v1
+                kind: Service
+                name: {$ref: {source: steps.name.data, path: $.name}}
+              notFound: 'null'
+            absent: [{op: isNull}]
+            owned:
+              - path: "$.metadata.labels['pyintegrationtests.io/run']"
+                op: equal
+                value: {$ref: {source: run, path: $.id}}
+            after: [release]
+            cleaned: [{op: isNull}]
+      - kind: assert
+        id: ready
+        observe:
+          action: kubernetes.resource
+          provider: cluster
+          with:
+            apiVersion: apps/v1
+            kind: Deployment
+            name: {$ref: {source: steps.name.data, path: $.name}}
+            readiness: deployment
+        mode: eventually
+        timeout: 120
+        assertions:
+          - {path: $.spec.replicas, op: equal, value: 1}
+          - {path: $.metadata.labels.app, op: equal, value: fixture}
+          - {path: "$.metadata.annotations['example.com/purpose']", op: equal, value: integration-test}
+          - {path: '$.spec.template.spec.containers[0].livenessProbe.httpGet.path', op: equal, value: /}
+          - {path: $.status.readyReplicas, op: equal, value: 1}
+      - kind: action
+        id: uninstall
+        action: helm.command
+        provider: charts
+        uses: [release]
+        with:
+          operation: uninstall
+          release: {$ref: {source: steps.name.data, path: $.name}}
+      - kind: assert
+        id: deployment-gone
+        observe:
+          action: kubernetes.resource
+          provider: cluster
+          with:
+            apiVersion: apps/v1
+            kind: Deployment
+            name: {$ref: {source: steps.name.data, path: $.name}}
+          notFound: 'null'
+        mode: eventually
+        timeout: 60
+        assertions: [{op: isNull}]
+      - kind: assert
+        id: service-gone
+        observe:
+          action: kubernetes.resource
+          provider: cluster
+          with:
+            apiVersion: v1
+            kind: Service
+            name: {$ref: {source: steps.name.data, path: $.name}}
+          notFound: 'null'
+        mode: eventually
+        timeout: 60
+        assertions: [{op: isNull}]

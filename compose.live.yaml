@@ -1,0 +1,5 @@
+services:
+  dev:
+    network_mode: bridge
+    volumes:
+      - ${CREDENTIALS_DIR:-./.pyintegrationtests/credentials}:/credentials:ro
