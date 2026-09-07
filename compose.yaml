@@ -1,0 +1,14 @@
+services:
+  dev:
+    build:
+      context: .
+      target: dev
+      args:
+        PYTHON_VERSION: ${PYTHON_VERSION:-3.12}
+    volumes:
+      - .:/app
+    working_dir: /app
+    network_mode: none
+    environment:
+      PYTHONDONTWRITEBYTECODE: '1'
+    command: python -m pytest

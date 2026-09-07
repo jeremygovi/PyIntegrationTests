@@ -1,0 +1,14 @@
+apiVersion: pyintegrationtests/v1alpha1
+providers:
+  cluster:
+    kind: kubernetes
+    context: REPLACE_WITH_SANDBOX_CONTEXT
+    namespace: integration-tests
+    kubeconfig: /credentials/kubeconfig
+  charts:
+    kind: helm
+    kubernetesProvider: cluster
+timeouts:
+  caseSeconds: 300
+  observationSeconds: 15
+  cleanupSeconds: 120

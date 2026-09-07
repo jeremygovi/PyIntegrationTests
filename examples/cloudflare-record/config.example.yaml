@@ -1,0 +1,10 @@
+apiVersion: pyintegrationtests/v1alpha1
+providers:
+  cloudflare:
+    kind: cloudflare
+    apiTokenEnv: CLOUDFLARE_API_TOKEN
+    zoneId: REPLACE_WITH_SANDBOX_ZONE_ID
+timeouts:
+  caseSeconds: 180
+  observationSeconds: 15
+  cleanupSeconds: 120

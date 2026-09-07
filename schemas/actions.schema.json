@@ -1,0 +1,835 @@
+{
+  "artifact.hash": {
+    "additionalProperties": false,
+    "properties": {
+      "algorithm": {
+        "default": "sha256",
+        "enum": [
+          "sha256",
+          "sha512"
+        ],
+        "title": "Algorithm",
+        "type": "string"
+      },
+      "value": {
+        "title": "Value"
+      }
+    },
+    "required": [
+      "value"
+    ],
+    "title": "HashParams",
+    "type": "object"
+  },
+  "artifact.read": {
+    "additionalProperties": false,
+    "properties": {
+      "encoding": {
+        "default": "text",
+        "enum": [
+          "text",
+          "base64",
+          "json"
+        ],
+        "title": "Encoding",
+        "type": "string"
+      },
+      "path": {
+        "title": "Path",
+        "type": "string"
+      }
+    },
+    "required": [
+      "path"
+    ],
+    "title": "FileParams",
+    "type": "object"
+  },
+  "artifact.zip": {
+    "additionalProperties": false,
+    "properties": {
+      "files": {
+        "additionalProperties": {
+          "type": "string"
+        },
+        "title": "Files",
+        "type": "object"
+      },
+      "name": {
+        "default": "fixture.zip",
+        "pattern": "^[a-zA-Z0-9_.-]+\\.zip$",
+        "title": "Name",
+        "type": "string"
+      }
+    },
+    "required": [
+      "files"
+    ],
+    "title": "ZIPParams",
+    "type": "object"
+  },
+  "aws.call": {
+    "additionalProperties": false,
+    "properties": {
+      "maxPages": {
+        "default": 100,
+        "maximum": 10000,
+        "minimum": 1,
+        "title": "Maxpages",
+        "type": "integer"
+      },
+      "operation": {
+        "pattern": "^[a-z][a-z0-9_]+$",
+        "title": "Operation",
+        "type": "string"
+      },
+      "pagination": {
+        "default": "page",
+        "enum": [
+          "page",
+          "all"
+        ],
+        "title": "Pagination",
+        "type": "string"
+      },
+      "parameters": {
+        "additionalProperties": true,
+        "title": "Parameters",
+        "type": "object"
+      },
+      "readStreams": {
+        "default": false,
+        "title": "Readstreams",
+        "type": "boolean"
+      },
+      "service": {
+        "pattern": "^[a-z][a-z0-9-]+$",
+        "title": "Service",
+        "type": "string"
+      }
+    },
+    "required": [
+      "service",
+      "operation"
+    ],
+    "title": "AWSParams",
+    "type": "object"
+  },
+  "aws.iam.delete-role": {
+    "additionalProperties": false,
+    "properties": {
+      "maxPages": {
+        "default": 100,
+        "maximum": 10000,
+        "minimum": 1,
+        "title": "Maxpages",
+        "type": "integer"
+      },
+      "roleName": {
+        "title": "Rolename",
+        "type": "string"
+      }
+    },
+    "required": [
+      "roleName"
+    ],
+    "title": "IAMParams",
+    "type": "object"
+  },
+  "aws.kms.find": {
+    "additionalProperties": false,
+    "properties": {
+      "maxPages": {
+        "default": 100,
+        "maximum": 10000,
+        "minimum": 1,
+        "title": "Maxpages",
+        "type": "integer"
+      },
+      "tags": {
+        "additionalProperties": {
+          "type": "string"
+        },
+        "minProperties": 1,
+        "title": "Tags",
+        "type": "object"
+      }
+    },
+    "required": [
+      "tags"
+    ],
+    "title": "KMSFindParams",
+    "type": "object"
+  },
+  "aws.kms.schedule-deletion": {
+    "additionalProperties": false,
+    "properties": {
+      "keyId": {
+        "title": "Keyid",
+        "type": "string"
+      },
+      "maxPages": {
+        "default": 100,
+        "maximum": 10000,
+        "minimum": 1,
+        "title": "Maxpages",
+        "type": "integer"
+      },
+      "pendingWindowInDays": {
+        "default": 7,
+        "maximum": 30,
+        "minimum": 7,
+        "title": "Pendingwindowindays",
+        "type": "integer"
+      }
+    },
+    "required": [
+      "keyId"
+    ],
+    "title": "KMSParams",
+    "type": "object"
+  },
+  "aws.s3.empty": {
+    "additionalProperties": false,
+    "properties": {
+      "bucket": {
+        "title": "Bucket",
+        "type": "string"
+      },
+      "deleteBucket": {
+        "default": false,
+        "title": "Deletebucket",
+        "type": "boolean"
+      },
+      "maxPages": {
+        "default": 1000,
+        "maximum": 10000,
+        "minimum": 1,
+        "title": "Maxpages",
+        "type": "integer"
+      }
+    },
+    "required": [
+      "bucket"
+    ],
+    "title": "S3Params",
+    "type": "object"
+  },
+  "cloudflare.request": {
+    "additionalProperties": false,
+    "properties": {
+      "body": {
+        "anyOf": [
+          {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Body"
+      },
+      "maxPages": {
+        "default": 100,
+        "maximum": 10000,
+        "minimum": 1,
+        "title": "Maxpages",
+        "type": "integer"
+      },
+      "method": {
+        "default": "GET",
+        "enum": [
+          "GET",
+          "POST",
+          "PUT",
+          "PATCH",
+          "DELETE"
+        ],
+        "title": "Method",
+        "type": "string"
+      },
+      "pagination": {
+        "default": "page",
+        "enum": [
+          "page",
+          "all"
+        ],
+        "title": "Pagination",
+        "type": "string"
+      },
+      "path": {
+        "title": "Path",
+        "type": "string"
+      },
+      "query": {
+        "additionalProperties": true,
+        "title": "Query",
+        "type": "object"
+      }
+    },
+    "required": [
+      "path"
+    ],
+    "title": "CloudflareParams",
+    "type": "object"
+  },
+  "data.value": {
+    "additionalProperties": false,
+    "properties": {
+      "value": {
+        "title": "Value"
+      }
+    },
+    "required": [
+      "value"
+    ],
+    "title": "ValueParams",
+    "type": "object"
+  },
+  "dns.query": {
+    "additionalProperties": false,
+    "properties": {
+      "name": {
+        "title": "Name",
+        "type": "string"
+      },
+      "recordType": {
+        "default": "A",
+        "title": "Recordtype",
+        "type": "string"
+      }
+    },
+    "required": [
+      "name"
+    ],
+    "title": "DNSParams",
+    "type": "object"
+  },
+  "helm.command": {
+    "additionalProperties": false,
+    "properties": {
+      "chart": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Chart"
+      },
+      "operation": {
+        "enum": [
+          "install",
+          "upgrade",
+          "uninstall",
+          "status",
+          "get-values",
+          "get-manifest",
+          "dependency-build"
+        ],
+        "title": "Operation",
+        "type": "string"
+      },
+      "release": {
+        "anyOf": [
+          {
+            "pattern": "^[a-z0-9][a-z0-9-]{0,51}[a-z0-9]$",
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Release"
+      },
+      "values": {
+        "additionalProperties": true,
+        "title": "Values",
+        "type": "object"
+      },
+      "valuesFiles": {
+        "items": {
+          "type": "string"
+        },
+        "title": "Valuesfiles",
+        "type": "array"
+      },
+      "version": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Version"
+      },
+      "wait": {
+        "default": false,
+        "title": "Wait",
+        "type": "boolean"
+      },
+      "workspaceRoot": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Workspaceroot"
+      }
+    },
+    "required": [
+      "operation"
+    ],
+    "title": "HelmParams",
+    "type": "object"
+  },
+  "http.request": {
+    "additionalProperties": false,
+    "properties": {
+      "body": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Body"
+      },
+      "followRedirects": {
+        "default": false,
+        "title": "Followredirects",
+        "type": "boolean"
+      },
+      "headers": {
+        "additionalProperties": {
+          "type": "string"
+        },
+        "title": "Headers",
+        "type": "object"
+      },
+      "jsonBody": {
+        "default": null,
+        "title": "Jsonbody"
+      },
+      "method": {
+        "default": "GET",
+        "enum": [
+          "GET",
+          "HEAD",
+          "OPTIONS",
+          "POST",
+          "PUT",
+          "PATCH",
+          "DELETE"
+        ],
+        "title": "Method",
+        "type": "string"
+      },
+      "query": {
+        "additionalProperties": true,
+        "title": "Query",
+        "type": "object"
+      },
+      "raiseForStatus": {
+        "default": false,
+        "title": "Raiseforstatus",
+        "type": "boolean"
+      },
+      "url": {
+        "title": "Url",
+        "type": "string"
+      }
+    },
+    "required": [
+      "url"
+    ],
+    "title": "HTTPParams",
+    "type": "object"
+  },
+  "jwt.sign": {
+    "additionalProperties": false,
+    "properties": {
+      "algorithm": {
+        "default": "RS256",
+        "enum": [
+          "RS256",
+          "RS384",
+          "RS512",
+          "ES256",
+          "HS256"
+        ],
+        "title": "Algorithm",
+        "type": "string"
+      },
+      "claims": {
+        "additionalProperties": true,
+        "title": "Claims",
+        "type": "object"
+      },
+      "headers": {
+        "additionalProperties": true,
+        "title": "Headers",
+        "type": "object"
+      },
+      "keyEnv": {
+        "title": "Keyenv",
+        "type": "string"
+      }
+    },
+    "required": [
+      "keyEnv",
+      "claims"
+    ],
+    "title": "JWTParams",
+    "type": "object"
+  },
+  "kubernetes.exec": {
+    "additionalProperties": false,
+    "properties": {
+      "argv": {
+        "items": {
+          "type": "string"
+        },
+        "title": "Argv",
+        "type": "array"
+      },
+      "container": {
+        "title": "Container",
+        "type": "string"
+      },
+      "name": {
+        "title": "Name",
+        "type": "string"
+      },
+      "namespace": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Namespace"
+      },
+      "sinceSeconds": {
+        "anyOf": [
+          {
+            "minimum": 1,
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Sinceseconds"
+      },
+      "tailLines": {
+        "default": 200,
+        "maximum": 10000,
+        "minimum": 1,
+        "title": "Taillines",
+        "type": "integer"
+      }
+    },
+    "required": [
+      "name",
+      "container"
+    ],
+    "title": "PodParams",
+    "type": "object"
+  },
+  "kubernetes.job": {
+    "additionalProperties": false,
+    "properties": {
+      "fromCronJob": {
+        "default": false,
+        "title": "Fromcronjob",
+        "type": "boolean"
+      },
+      "labels": {
+        "additionalProperties": {
+          "type": "string"
+        },
+        "title": "Labels",
+        "type": "object"
+      },
+      "name": {
+        "title": "Name",
+        "type": "string"
+      },
+      "namespace": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Namespace"
+      },
+      "source": {
+        "title": "Source",
+        "type": "string"
+      }
+    },
+    "required": [
+      "source",
+      "name"
+    ],
+    "title": "JobParams",
+    "type": "object"
+  },
+  "kubernetes.logs": {
+    "additionalProperties": false,
+    "properties": {
+      "argv": {
+        "items": {
+          "type": "string"
+        },
+        "title": "Argv",
+        "type": "array"
+      },
+      "container": {
+        "title": "Container",
+        "type": "string"
+      },
+      "name": {
+        "title": "Name",
+        "type": "string"
+      },
+      "namespace": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Namespace"
+      },
+      "sinceSeconds": {
+        "anyOf": [
+          {
+            "minimum": 1,
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Sinceseconds"
+      },
+      "tailLines": {
+        "default": 200,
+        "maximum": 10000,
+        "minimum": 1,
+        "title": "Taillines",
+        "type": "integer"
+      }
+    },
+    "required": [
+      "name",
+      "container"
+    ],
+    "title": "PodParams",
+    "type": "object"
+  },
+  "kubernetes.resource": {
+    "additionalProperties": false,
+    "properties": {
+      "apiVersion": {
+        "title": "Apiversion",
+        "type": "string"
+      },
+      "body": {
+        "anyOf": [
+          {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Body"
+      },
+      "expectedGeneration": {
+        "anyOf": [
+          {
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Expectedgeneration"
+      },
+      "fieldSelector": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Fieldselector"
+      },
+      "jsonPatch": {
+        "anyOf": [
+          {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Jsonpatch"
+      },
+      "kind": {
+        "title": "Kind",
+        "type": "string"
+      },
+      "labelSelector": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Labelselector"
+      },
+      "maxPages": {
+        "default": 100,
+        "maximum": 10000,
+        "minimum": 1,
+        "title": "Maxpages",
+        "type": "integer"
+      },
+      "name": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Name"
+      },
+      "namespace": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Namespace"
+      },
+      "operation": {
+        "default": "get",
+        "enum": [
+          "get",
+          "list",
+          "create",
+          "apply",
+          "patch",
+          "delete"
+        ],
+        "title": "Operation",
+        "type": "string"
+      },
+      "patchType": {
+        "default": "merge",
+        "enum": [
+          "merge",
+          "json",
+          "strategic"
+        ],
+        "title": "Patchtype",
+        "type": "string"
+      },
+      "readiness": {
+        "anyOf": [
+          {
+            "enum": [
+              "deployment",
+              "job",
+              "ack"
+            ],
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Readiness"
+      }
+    },
+    "required": [
+      "apiVersion",
+      "kind"
+    ],
+    "title": "ResourceParams",
+    "type": "object"
+  },
+  "name.generate": {
+    "additionalProperties": false,
+    "properties": {
+      "maxLength": {
+        "default": 63,
+        "maximum": 253,
+        "minimum": 16,
+        "title": "Maxlength",
+        "type": "integer"
+      },
+      "prefix": {
+        "default": "pit",
+        "title": "Prefix",
+        "type": "string"
+      }
+    },
+    "title": "NameParams",
+    "type": "object"
+  }
+}

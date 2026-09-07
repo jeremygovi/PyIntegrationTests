@@ -1,0 +1,381 @@
+{
+  "$defs": {
+    "AWSConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "accountId": {
+          "pattern": "^\\d{12}$",
+          "title": "Accountid",
+          "type": "string"
+        },
+        "endpointUrl": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Endpointurl"
+        },
+        "kind": {
+          "const": "aws",
+          "title": "Kind",
+          "type": "string"
+        },
+        "operations": {
+          "additionalProperties": {
+            "enum": [
+              "read",
+              "mutate"
+            ],
+            "type": "string"
+          },
+          "title": "Operations",
+          "type": "object"
+        },
+        "profile": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Profile"
+        },
+        "region": {
+          "title": "Region",
+          "type": "string"
+        },
+        "verify": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "default": true,
+          "title": "Verify"
+        }
+      },
+      "required": [
+        "kind",
+        "region",
+        "accountId"
+      ],
+      "title": "AWSConfig",
+      "type": "object"
+    },
+    "ArtifactsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "directory": {
+          "default": ".pyintegrationtests/runs",
+          "title": "Directory",
+          "type": "string"
+        },
+        "maxBytes": {
+          "default": 8388608,
+          "exclusiveMinimum": 0,
+          "maximum": 104857600,
+          "title": "Maxbytes",
+          "type": "integer"
+        }
+      },
+      "title": "ArtifactsConfig",
+      "type": "object"
+    },
+    "CleanupConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "policy": {
+          "const": "strict",
+          "default": "strict",
+          "title": "Policy",
+          "type": "string"
+        }
+      },
+      "title": "CleanupConfig",
+      "type": "object"
+    },
+    "CloudflareConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "apiTokenEnv": {
+          "default": "CLOUDFLARE_API_TOKEN",
+          "title": "Apitokenenv",
+          "type": "string"
+        },
+        "baseUrl": {
+          "default": "https://api.cloudflare.com/client/v4",
+          "title": "Baseurl",
+          "type": "string"
+        },
+        "kind": {
+          "const": "cloudflare",
+          "title": "Kind",
+          "type": "string"
+        },
+        "zoneId": {
+          "title": "Zoneid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "zoneId"
+      ],
+      "title": "CloudflareConfig",
+      "type": "object"
+    },
+    "DNSConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "dns",
+          "title": "Kind",
+          "type": "string"
+        },
+        "nameservers": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Nameservers",
+          "type": "array"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "title": "DNSConfig",
+      "type": "object"
+    },
+    "HTTPConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "baseUrl": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Baseurl"
+        },
+        "kind": {
+          "const": "http",
+          "title": "Kind",
+          "type": "string"
+        },
+        "proxy": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Proxy"
+        },
+        "trustEnv": {
+          "default": false,
+          "title": "Trustenv",
+          "type": "boolean"
+        },
+        "verify": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "default": true,
+          "title": "Verify"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "title": "HTTPConfig",
+      "type": "object"
+    },
+    "HelmConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "binary": {
+          "default": "helm",
+          "title": "Binary",
+          "type": "string"
+        },
+        "kind": {
+          "const": "helm",
+          "title": "Kind",
+          "type": "string"
+        },
+        "kubernetesProvider": {
+          "title": "Kubernetesprovider",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "kubernetesProvider"
+      ],
+      "title": "HelmConfig",
+      "type": "object"
+    },
+    "KubernetesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "allowClusterScoped": {
+          "default": false,
+          "title": "Allowclusterscoped",
+          "type": "boolean"
+        },
+        "context": {
+          "title": "Context",
+          "type": "string"
+        },
+        "kind": {
+          "const": "kubernetes",
+          "title": "Kind",
+          "type": "string"
+        },
+        "kubeconfig": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Kubeconfig"
+        },
+        "namespace": {
+          "title": "Namespace",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "context",
+        "namespace"
+      ],
+      "title": "KubernetesConfig",
+      "type": "object"
+    },
+    "ProviderConfig": {
+      "discriminator": {
+        "mapping": {
+          "aws": "#/$defs/AWSConfig",
+          "cloudflare": "#/$defs/CloudflareConfig",
+          "dns": "#/$defs/DNSConfig",
+          "helm": "#/$defs/HelmConfig",
+          "http": "#/$defs/HTTPConfig",
+          "kubernetes": "#/$defs/KubernetesConfig"
+        },
+        "propertyName": "kind"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/KubernetesConfig"
+        },
+        {
+          "$ref": "#/$defs/HelmConfig"
+        },
+        {
+          "$ref": "#/$defs/AWSConfig"
+        },
+        {
+          "$ref": "#/$defs/CloudflareConfig"
+        },
+        {
+          "$ref": "#/$defs/HTTPConfig"
+        },
+        {
+          "$ref": "#/$defs/DNSConfig"
+        }
+      ]
+    },
+    "Timeouts": {
+      "additionalProperties": false,
+      "properties": {
+        "caseSeconds": {
+          "default": 900,
+          "exclusiveMinimum": 0,
+          "maximum": 86400,
+          "title": "Caseseconds",
+          "type": "number"
+        },
+        "cleanupSeconds": {
+          "default": 300,
+          "exclusiveMinimum": 0,
+          "maximum": 3600,
+          "title": "Cleanupseconds",
+          "type": "number"
+        },
+        "observationSeconds": {
+          "default": 15,
+          "exclusiveMinimum": 0,
+          "maximum": 3600,
+          "title": "Observationseconds",
+          "type": "number"
+        }
+      },
+      "title": "Timeouts",
+      "type": "object"
+    }
+  },
+  "$id": "https://raw.githubusercontent.com/jeremygovi/PyIntegrationTests/master/schemas/config.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "apiVersion": {
+      "const": "pyintegrationtests/v1alpha1",
+      "default": "pyintegrationtests/v1alpha1",
+      "title": "Apiversion",
+      "type": "string"
+    },
+    "artifacts": {
+      "$ref": "#/$defs/ArtifactsConfig"
+    },
+    "cleanup": {
+      "$ref": "#/$defs/CleanupConfig"
+    },
+    "plugins": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Plugins",
+      "type": "array"
+    },
+    "providers": {
+      "additionalProperties": {
+        "$ref": "#/$defs/ProviderConfig"
+      },
+      "title": "Providers",
+      "type": "object"
+    },
+    "timeouts": {
+      "$ref": "#/$defs/Timeouts"
+    }
+  },
+  "title": "Config",
+  "type": "object"
+}

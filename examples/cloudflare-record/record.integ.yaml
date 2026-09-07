@@ -1,0 +1,144 @@
+# yaml-language-server: $schema=../../schemas/suite.schema.json
+apiVersion: pyintegrationtests/v1alpha1
+id: cloudflare-record
+name: Owned DNS record CRUD in an external sandbox zone
+config: config.example.yaml
+inputs:
+  domain: sandbox.example.invalid
+tests:
+  - id: record-lifecycle
+    steps:
+      - kind: action
+        id: name
+        action: name.generate
+        with: {prefix: pit-record}
+      - kind: action
+        id: target
+        action: data.value
+        with:
+          value:
+            name:
+              $format:
+                template: '{name}.{domain}'
+                values:
+                  name: {$ref: {source: steps.name.data, path: $.name}}
+                  domain: {$ref: {source: inputs, path: $.domain}}
+            path:
+              $format:
+                template: '/zones/{zone}/dns_records'
+                values: {zone: {$ref: {source: config, path: $.providers.cloudflare.zoneId}}}
+      - kind: action
+        id: create
+        action: cloudflare.request
+        provider: cloudflare
+        with:
+          method: POST
+          path: {$ref: {source: steps.target.data, path: $.path}}
+          body:
+            type: A
+            name: {$ref: {source: steps.target.data, path: $.name}}
+            content: 192.0.2.10
+            ttl: 120
+            proxied: false
+            comment: {$ref: {source: run, path: $.id}}
+        captures:
+          id: {path: $.result.id}
+        creates:
+          id: record
+          probe:
+            action: cloudflare.request
+            provider: cloudflare
+            with:
+              path: {$ref: {source: steps.target.data, path: $.path}}
+              query:
+                name: {$ref: {source: steps.target.data, path: $.name}}
+                type: A
+          absent: [{path: $.result, op: lengthEqual, value: 0}]
+          owned:
+            - {path: $.result, op: lengthEqual, value: 1}
+            - path: $.result[0].comment
+              op: equal
+              value: {$ref: {source: run, path: $.id}}
+          cleanup:
+            action: cloudflare.request
+            provider: cloudflare
+            with:
+              method: DELETE
+              path:
+                $format:
+                  template: '{path}/{id}'
+                  values:
+                    path: {$ref: {source: steps.target.data, path: $.path}}
+                    id: {$ref: {source: resource.data, path: '$.result[0].id'}}
+      - kind: action
+        id: record-path
+        action: data.value
+        with:
+          value:
+            $format:
+              template: '{path}/{id}'
+              values:
+                path: {$ref: {source: steps.target.data, path: $.path}}
+                id: {$ref: {source: steps.create.captures.id}}
+      - kind: assert
+        id: read-created
+        observe:
+          action: cloudflare.request
+          provider: cloudflare
+          with:
+            path: {$ref: {source: steps.record-path.data}}
+        mode: eventually
+        timeout: 30
+        assertions:
+          - path: $.result.name
+            op: equal
+            value: {$ref: {source: steps.target.data, path: $.name}}
+          - {path: $.result.type, op: equal, value: A}
+          - {path: $.result.content, op: equal, value: 192.0.2.10}
+          - {path: $.result.ttl, op: equal, value: 120}
+          - path: $.result.comment
+            op: equal
+            value: {$ref: {source: run, path: $.id}}
+      - kind: action
+        id: update
+        action: cloudflare.request
+        provider: cloudflare
+        uses: [record]
+        with:
+          method: PATCH
+          path: {$ref: {source: steps.record-path.data}}
+          body: {content: 192.0.2.20, ttl: 300}
+      - kind: assert
+        id: read-updated
+        observe:
+          action: cloudflare.request
+          provider: cloudflare
+          with:
+            path: {$ref: {source: steps.record-path.data}}
+        mode: eventually
+        timeout: 30
+        assertions:
+          - {path: $.result.content, op: equal, value: 192.0.2.20}
+          - {path: $.result.ttl, op: equal, value: 300}
+          - path: $.result.id
+            op: equal
+            value: {$ref: {source: steps.create.captures.id}}
+      - kind: action
+        id: delete
+        action: cloudflare.request
+        provider: cloudflare
+        uses: [record]
+        with:
+          method: DELETE
+          path: {$ref: {source: steps.record-path.data}}
+      - kind: assert
+        id: disappeared
+        observe:
+          action: cloudflare.request
+          provider: cloudflare
+          with:
+            path: {$ref: {source: steps.record-path.data}}
+          notFound: 'null'
+        mode: eventually
+        timeout: 30
+        assertions: [{op: isNull}]
