@@ -36,13 +36,19 @@ class ResourceParams(Model):
     max_pages: int = Field(default=100, ge=1, le=10000)
 
 
-class PodParams(Model):
+class LogsParams(Model):
     namespace: str | None = None
     name: str
     container: str
-    argv: list[str] = Field(default_factory=list)
     tail_lines: int = Field(default=200, ge=1, le=10000)
     since_seconds: int | None = Field(default=None, ge=1)
+
+
+class ExecParams(Model):
+    namespace: str | None = None
+    name: str
+    container: str
+    argv: list[str] = Field(min_length=1)
 
 
 class JobParams(Model):
@@ -371,9 +377,9 @@ def register(registry: Registry) -> None:
         )
     )
     registry.register(
-        Action("kubernetes.logs", PodParams, logs, "read", "kubernetes", sensitive=True)
+        Action("kubernetes.logs", LogsParams, logs, "read", "kubernetes", sensitive=True)
     )
     registry.register(
-        Action("kubernetes.exec", PodParams, execute, "mutate", "kubernetes", sensitive=True)
+        Action("kubernetes.exec", ExecParams, execute, "mutate", "kubernetes", sensitive=True)
     )
     registry.register(Action("kubernetes.job", JobParams, create_job, "mutate", "kubernetes"))

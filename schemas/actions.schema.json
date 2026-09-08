@@ -506,6 +506,7 @@
         "items": {
           "type": "string"
         },
+        "minItems": 1,
         "title": "Argv",
         "type": "array"
       },
@@ -528,33 +529,14 @@
         ],
         "default": null,
         "title": "Namespace"
-      },
-      "sinceSeconds": {
-        "anyOf": [
-          {
-            "minimum": 1,
-            "type": "integer"
-          },
-          {
-            "type": "null"
-          }
-        ],
-        "default": null,
-        "title": "Sinceseconds"
-      },
-      "tailLines": {
-        "default": 200,
-        "maximum": 10000,
-        "minimum": 1,
-        "title": "Taillines",
-        "type": "integer"
       }
     },
     "required": [
       "name",
-      "container"
+      "container",
+      "argv"
     ],
-    "title": "PodParams",
+    "title": "ExecParams",
     "type": "object"
   },
   "kubernetes.job": {
@@ -603,13 +585,6 @@
   "kubernetes.logs": {
     "additionalProperties": false,
     "properties": {
-      "argv": {
-        "items": {
-          "type": "string"
-        },
-        "title": "Argv",
-        "type": "array"
-      },
       "container": {
         "title": "Container",
         "type": "string"
@@ -655,7 +630,7 @@
       "name",
       "container"
     ],
-    "title": "PodParams",
+    "title": "LogsParams",
     "type": "object"
   },
   "kubernetes.resource": {

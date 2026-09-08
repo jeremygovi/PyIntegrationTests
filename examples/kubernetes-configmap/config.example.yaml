@@ -1,0 +1,8 @@
+apiVersion: pyintegrationtests/v1alpha1
+
+providers:
+  cluster:
+    kind: kubernetes
+    context: REPLACE_WITH_SANDBOX_CONTEXT
+    namespace: REPLACE_WITH_EXISTING_NAMESPACE
+    kubeconfig: /credentials/kubeconfig

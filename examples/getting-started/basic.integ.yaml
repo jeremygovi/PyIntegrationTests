@@ -1,0 +1,55 @@
+apiVersion: pyintegrationtests/v1alpha1
+id: getting-started
+name: Premier test sans infrastructure
+
+inputs:
+  expectedReplicas: 2
+
+tests:
+  - id: inspect-a-value
+    name: Comprendre action, capture et assertion
+    labels:
+      level: beginner
+    steps:
+      - kind: action
+        id: fixture
+        action: data.value
+        with:
+          value:
+            application: demo
+            replicas: 2
+            regions: [eu-west-1, eu-west-3]
+        captures:
+          replicas:
+            path: $.replicas
+        assertions:
+          - path: $.application
+            op: equal
+            value: demo
+          - path: $.regions
+            op: contains
+            value: eu-west-3
+
+      - kind: assert
+        id: verify-capture
+        source: steps.fixture.captures.replicas
+        assertions:
+          - op: equal
+            value:
+              $ref:
+                source: inputs
+                path: $.expectedReplicas
+
+  - id: generate-a-name
+    name: Générer une valeur propre à l'exécution
+    steps:
+      - kind: action
+        id: generate
+        action: name.generate
+        with:
+          prefix: pit-demo
+          maxLength: 40
+        assertions:
+          - path: $.name
+            op: matchRegex
+            value: ^pit-demo-[a-z0-9-]+$

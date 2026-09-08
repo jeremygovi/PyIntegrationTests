@@ -1,0 +1,90 @@
+apiVersion: pyintegrationtests/v1alpha1
+id: kubernetes-configmap
+name: Cycle de vie contrôlé d'une ConfigMap
+config: config.example.yaml
+
+tests:
+  - id: create-observe-cleanup
+    name: Créer, observer puis supprimer une ConfigMap
+    labels:
+      provider: kubernetes
+      level: beginner
+    steps:
+      - kind: action
+        id: generate-name
+        action: name.generate
+        with:
+          prefix: pit-configmap
+          maxLength: 63
+        captures:
+          name:
+            path: $.name
+
+      - kind: action
+        id: create
+        action: kubernetes.resource
+        provider: cluster
+        with:
+          operation: create
+          apiVersion: v1
+          kind: ConfigMap
+          name:
+            $ref:
+              source: steps.generate-name.captures.name
+          body:
+            data:
+              message: bonjour
+        creates:
+          id: tutorial-configmap
+          probe:
+            action: kubernetes.resource
+            provider: cluster
+            notFound: "null"
+            with:
+              operation: get
+              apiVersion: v1
+              kind: ConfigMap
+              name:
+                $ref:
+                  source: steps.generate-name.captures.name
+          absent:
+            - op: isNull
+          owned:
+            - path: "$.metadata.labels['pyintegrationtests.io/run']"
+              op: equal
+              value:
+                $ref:
+                  source: run
+                  path: $.id
+          cleanup:
+            action: kubernetes.resource
+            provider: cluster
+            with:
+              operation: delete
+              apiVersion: v1
+              kind: ConfigMap
+              name:
+                $ref:
+                  source: steps.generate-name.captures.name
+          cleaned:
+            - op: isNull
+
+      - kind: assert
+        id: observe
+        mode: eventually
+        timeout: 30
+        interval: 1
+        observe:
+          action: kubernetes.resource
+          provider: cluster
+          with:
+            operation: get
+            apiVersion: v1
+            kind: ConfigMap
+            name:
+              $ref:
+                source: steps.generate-name.captures.name
+        assertions:
+          - path: $.data.message
+            op: equal
+            value: bonjour

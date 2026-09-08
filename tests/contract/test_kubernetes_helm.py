@@ -183,7 +183,7 @@ def test_exec_returns_separate_streams_and_exit_code(context, monkeypatch):
     result = kubernetes.execute(
         context,
         "cluster",
-        kubernetes.PodParams(
+        kubernetes.ExecParams(
             name="pod", container="sidecar", argv=["sh", "-c", "echo fixture"]
         ).model_dump(),
         1,
